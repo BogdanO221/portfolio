@@ -340,7 +340,7 @@ function SectionHead({
         )}
         <h2
           style={{
-            margin: 0, fontSize: 30, fontWeight: 600,
+            margin: 0, fontSize: 'var(--section-title-size)', fontWeight: 600,
             color: '#fff', letterSpacing: -0.6, lineHeight: 1.05,
           }}
         >
@@ -475,6 +475,7 @@ function Sidebar({ active }: { active: string }) {
 
   return (
     <aside
+      className="portfolio-sidebar"
       style={{
         position: 'sticky', top: 0, zIndex: 5,
         height: '100vh',
@@ -726,7 +727,7 @@ function TopBar() {
       style={{
         position: 'sticky', top: 0, zIndex: 5,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '14px 56px',
+        padding: 'var(--topbar-pad)', flexWrap: 'wrap', gap: 10,
         borderBottom: '1px solid rgba(255,255,255,.04)',
         background: 'rgba(6,7,11,.75)',
         backdropFilter: 'blur(18px)',
@@ -801,7 +802,7 @@ function Hero() {
 
       <div
         style={{
-          display: 'grid', gridTemplateColumns: '1fr 320px', gap: 48,
+          display: 'grid', gridTemplateColumns: 'var(--hero-cols)', gap: 48,
           alignItems: 'center', marginTop: 22,
         }}
       >
@@ -809,7 +810,10 @@ function Hero() {
           <Reveal delay={60}>
             <h1
               style={{
-                margin: 0, fontSize: 72, lineHeight: 0.98, letterSpacing: -2.5,
+                margin: 0,
+                fontSize: 'var(--hero-h1-size)',
+                lineHeight: 'var(--hero-h1-line)' as unknown as number,
+                letterSpacing: 'var(--hero-h1-letter)',
                 fontWeight: 600,
                 background: 'linear-gradient(180deg, #fff 30%, rgba(255,255,255,.55) 100%)',
                 WebkitBackgroundClip: 'text',
@@ -873,15 +877,17 @@ function Hero() {
           </Reveal>
         </div>
 
-        <Reveal delay={180}>
-          <HeroPortrait />
-        </Reveal>
+        <div className="portfolio-hero-portrait">
+          <Reveal delay={180}>
+            <HeroPortrait />
+          </Reveal>
+        </div>
       </div>
 
       <Reveal delay={340}>
         <div
           style={{
-            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12,
+            display: 'grid', gridTemplateColumns: 'var(--stats-cols)', gap: 12,
             marginTop: 44,
           }}
         >
@@ -1092,7 +1098,7 @@ function About() {
         sub="I started modeling intersections and watching cities breathe. Then I realized frontends are traffic systems too: route attention, smooth congestion, optimize latency. I've been building them ever since."
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'var(--about-cols)', gap: 16 }}>
         <Reveal>
           <Panel label="STORY" code="// about.md" accent={C}>
             <div style={{ lineHeight: 1.7, color: 'rgba(255,255,255,.78)', fontSize: 14.5, maxWidth: 620 }}>
@@ -1185,7 +1191,7 @@ function Skills() {
         sub="Self-assessed on a /100 scale. The radar is the frontend stack I use day-to-day; the bars are the engineering side."
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.05fr', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'var(--skills1-cols)', gap: 16 }}>
         <Reveal>
           <Panel
             label="FRONTEND · RADAR"
@@ -1254,7 +1260,7 @@ function Skills() {
         </Reveal>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 16, marginTop: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'var(--skills2-cols)', gap: 16, marginTop: 16 }}>
         <Reveal>
           <Panel label="FRONTEND · DETAIL" code="// stack.json" accent={C}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px 28px' }}>
@@ -1391,7 +1397,7 @@ function Projects() {
         <FlagshipCard p={PROJECTS[0]} />
       </Reveal>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginTop: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'var(--other-cols)', gap: 16, marginTop: 16 }}>
         {PROJECTS.slice(1).map((p, i) => (
           <Reveal key={p.id} delay={i * 80}>
             <ProjectCard p={p} />
@@ -1445,7 +1451,7 @@ function FlagshipCard({ p }: { p: Project }) {
         </span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1fr', minHeight: 360, position: 'relative' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'var(--flagship-cols)', minHeight: 360, position: 'relative' }}>
         <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <span
@@ -1464,7 +1470,7 @@ function FlagshipCard({ p }: { p: Project }) {
           </div>
           <h3
             style={{
-              margin: 0, fontSize: 40, fontWeight: 600, letterSpacing: -1.2,
+              margin: 0, fontSize: 'var(--flagship-title-size)', fontWeight: 600, letterSpacing: -1.2,
               color: '#fff', lineHeight: 1,
               display: 'flex', alignItems: 'baseline', gap: 14, flexWrap: 'wrap',
             }}
@@ -1503,6 +1509,7 @@ function FlagshipCard({ p }: { p: Project }) {
           <div style={{ flex: 1 }} />
 
           <div
+            className="portfolio-flagship-meta"
             style={{
               paddingTop: 18, borderTop: '1px dashed rgba(255,255,255,.08)',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap',
@@ -1564,6 +1571,7 @@ function TripvicePreview() {
   ];
   return (
     <div
+      className="portfolio-tripvice-preview"
       style={{
         position: 'relative',
         background: `linear-gradient(135deg, ${C}0e, ${C2}0e)`,
@@ -1774,8 +1782,9 @@ function Experience() {
               {EXPERIENCE.map((e, i) => (
                 <div
                   key={i}
+                  className="portfolio-experience-row"
                   style={{
-                    display: 'grid', gridTemplateColumns: '20px 170px 1fr 110px',
+                    display: 'grid', gridTemplateColumns: 'var(--experience-cols)',
                     gap: 16, alignItems: 'flex-start',
                     padding: '14px 0',
                     borderBottom: i < EXPERIENCE.length - 1 ? '1px dashed rgba(255,255,255,.05)' : 'none',
@@ -1848,6 +1857,7 @@ function Contact() {
 
       <Reveal>
         <div
+          className="portfolio-contact-card"
           style={{
             position: 'relative',
             padding: '40px 44px',
@@ -1871,7 +1881,7 @@ function Contact() {
 
           <div
             style={{
-              display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 44,
+              display: 'grid', gridTemplateColumns: 'var(--contact-cols)', gap: 44,
               alignItems: 'center', position: 'relative',
             }}
           >
@@ -1886,7 +1896,7 @@ function Contact() {
               </div>
               <h3
                 style={{
-                  margin: 0, fontSize: 38, fontWeight: 600, letterSpacing: -1.2,
+                  margin: 0, fontSize: 'var(--contact-title-size)', fontWeight: 600, letterSpacing: -1.2,
                   color: '#fff', lineHeight: 1.05, maxWidth: 500,
                 }}
               >
@@ -2035,7 +2045,7 @@ export default function Page() {
         fontFamily: 'var(--font-space-grotesk), Inter, system-ui, sans-serif',
         position: 'relative',
         display: 'grid',
-        gridTemplateColumns: '236px 1fr',
+        gridTemplateColumns: 'var(--page-cols)',
       }}
     >
       {/* ambient gradients */}
@@ -2071,10 +2081,10 @@ export default function Page() {
         <TopBar />
         <div
           style={{
-            padding: '36px 56px 56px',
+            padding: 'var(--main-pad)',
             display: 'flex',
             flexDirection: 'column',
-            gap: 64,
+            gap: 'var(--section-gap)',
           }}
         >
           <Hero />

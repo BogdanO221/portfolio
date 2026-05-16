@@ -58,3 +58,89 @@ html {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ─── Responsive tokens ─────────────────────────────────────────
+   Inline styles read these via var(...). Override at breakpoints
+   so the layout collapses on tablets and phones without touching
+   the component tree. */
+:root {
+  --page-cols: 236px 1fr;
+  --main-pad: 36px 56px 56px;
+  --topbar-pad: 14px 56px;
+  --section-gap: 64px;
+
+  --hero-cols: 1fr 320px;
+  --hero-h1-size: 72px;
+  --hero-h1-letter: -2.5px;
+  --hero-h1-line: 0.98;
+
+  --stats-cols: repeat(4, 1fr);
+  --about-cols: 1.3fr 1fr;
+  --skills1-cols: 1fr 1.05fr;
+  --skills2-cols: 1.5fr 1fr;
+  --flagship-cols: 1.05fr 1fr;
+  --other-cols: repeat(2, 1fr);
+  --experience-cols: 20px 170px 1fr 110px;
+  --contact-cols: 1.3fr 1fr;
+
+  --section-title-size: 30px;
+  --flagship-title-size: 40px;
+  --contact-title-size: 38px;
+}
+
+/* Tablet — collapse two-column blocks, hide sidebar + hero portrait. */
+@media (max-width: 1024px) {
+  :root {
+    --page-cols: 1fr;
+    --main-pad: 28px 24px 40px;
+    --topbar-pad: 12px 24px;
+    --section-gap: 48px;
+
+    --hero-cols: 1fr;
+    --about-cols: 1fr;
+    --skills1-cols: 1fr;
+    --skills2-cols: 1fr;
+    --flagship-cols: 1fr;
+    --other-cols: 1fr;
+    --contact-cols: 1fr;
+  }
+  .portfolio-sidebar,
+  .portfolio-hero-portrait {
+    display: none !important;
+  }
+}
+
+/* Phone — shrink hero, stack stats to 2x2, hide tripvice preview & timeline year column. */
+@media (max-width: 640px) {
+  :root {
+    --hero-h1-size: 44px;
+    --hero-h1-letter: -1.2px;
+    --hero-h1-line: 1;
+    --stats-cols: repeat(2, 1fr);
+    --experience-cols: 1fr;
+    --main-pad: 20px 16px 32px;
+    --topbar-pad: 10px 16px;
+    --section-gap: 40px;
+    --section-title-size: 24px;
+    --flagship-title-size: 28px;
+    --contact-title-size: 26px;
+  }
+  .portfolio-tripvice-preview {
+    display: none !important;
+  }
+  .portfolio-experience-row {
+    border-left: 2px solid rgba(0, 255, 209, 0.4) !important;
+    padding-left: 16px !important;
+  }
+  .portfolio-experience-row > :first-child,
+  .portfolio-experience-row > :last-child {
+    display: none !important;
+  }
+  .portfolio-flagship-meta {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .portfolio-contact-card {
+    padding: 24px 20px !important;
+  }
+}
