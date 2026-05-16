@@ -237,7 +237,7 @@ function Panel({
           {headerRight}
         </div>
       )}
-      <div style={{ padding: padding ?? (label ? 18 : 22) }}>{children}</div>
+      <div style={{ padding: padding ?? `var(${label ? '--panel-pad' : '--panel-pad-no-header'})` }}>{children}</div>
     </div>
   );
 }
@@ -299,6 +299,19 @@ function LiveClock() {
       {pad(t.getHours())}:{pad(t.getMinutes())}:{pad(t.getSeconds())} GMT+1
     </span>
   );
+}
+
+// Viewport width — drives the radar chart size (SVG text doesn't scale gracefully
+// via CSS, so we re-render at a different size when the breakpoint changes).
+function useViewportWidth() {
+  const [w, setW] = useState(1280);
+  useEffect(() => {
+    const update = () => setW(window.innerWidth);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+  return w;
 }
 
 function SectionHead({
@@ -733,7 +746,10 @@ function TopBar() {
         backdropFilter: 'blur(18px)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
+      <div
+        className="portfolio-topbar-breadcrumb"
+        style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: 'rgba(255,255,255,.5)' }}
+      >
         <span style={{ fontFamily: MONO, color: C }}>~/</span>
         <span>portfolio</span>
         <span style={{ opacity: 0.4 }}>›</span>
@@ -750,8 +766,32 @@ function TopBar() {
           LIVE
         </span>
       </div>
+      {/* Mobile-only BO badge so the topbar isn't empty on small screens. */}
+      <a
+        href="#overview"
+        style={{
+          display: 'none', alignItems: 'center', gap: 10,
+          textDecoration: 'none', color: '#fff',
+        }}
+        className="portfolio-topbar-mobile-brand"
+      >
+        <span
+          style={{
+            width: 26, height: 26, borderRadius: 7,
+            background: `linear-gradient(135deg, ${C}, ${C2})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: BG, fontWeight: 700, fontSize: 11,
+          }}
+        >
+          BO
+        </span>
+        <span style={{ fontSize: 13, fontWeight: 600 }}>Bogdan</span>
+      </a>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontFamily: MONO, fontSize: 11, color: 'rgba(255,255,255,.5)' }}>
+        <span
+          className="portfolio-topbar-clock"
+          style={{ fontFamily: MONO, fontSize: 11, color: 'rgba(255,255,255,.5)' }}
+        >
           <LiveClock />
         </span>
         <a
@@ -770,6 +810,62 @@ function TopBar() {
         </a>
       </div>
     </header>
+  );
+}
+
+// ─── Mobile nav ───────────────────────────────────────────────────
+
+function MobileNav({ active }: { active: string }) {
+  const sections = [
+    { k: 'overview',   label: 'Overview' },
+    { k: 'about',      label: 'About' },
+    { k: 'skills',     label: 'Skills' },
+    { k: 'projects',   label: 'Projects' },
+    { k: 'experience', label: 'Experience' },
+    { k: 'contact',    label: 'Contact' },
+  ];
+  return (
+    <nav
+      className="portfolio-mobile-nav"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 4,
+        padding: '8px 14px',
+        background: 'rgba(6,7,11,.85)',
+        backdropFilter: 'blur(18px)',
+        borderBottom: '1px solid rgba(255,255,255,.04)',
+        overflowX: 'auto',
+        whiteSpace: 'nowrap',
+        WebkitOverflowScrolling: 'touch',
+      }}
+    >
+      <div style={{ display: 'inline-flex', gap: 6 }}>
+        {sections.map((s) => {
+          const isActive = active === s.k;
+          return (
+            <a
+              key={s.k}
+              href={`#${s.k}`}
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById(s.k)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+              style={{
+                padding: '6px 12px', borderRadius: 999,
+                background: isActive ? `${C}14` : 'rgba(255,255,255,.03)',
+                border: '1px solid ' + (isActive ? `${C}55` : 'rgba(255,255,255,.06)'),
+                color: isActive ? C : 'rgba(255,255,255,.7)',
+                fontSize: 12, fontWeight: 500, textDecoration: 'none',
+                fontFamily: 'inherit',
+              }}
+            >
+              {s.label}
+            </a>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
 
@@ -802,7 +898,7 @@ function Hero() {
 
       <div
         style={{
-          display: 'grid', gridTemplateColumns: 'var(--hero-cols)', gap: 48,
+          display: 'grid', gridTemplateColumns: 'var(--hero-cols)', gap: 'var(--hero-gap)',
           alignItems: 'center', marginTop: 22,
         }}
       >
@@ -847,7 +943,7 @@ function Hero() {
           <Reveal delay={220}>
             <p
               style={{
-                margin: '22px 0 0', fontSize: 20, lineHeight: 1.5,
+                margin: '22px 0 0', fontSize: 'var(--hero-lead-size)', lineHeight: 1.5,
                 color: 'rgba(255,255,255,.78)', maxWidth: 580, fontWeight: 400,
               }}
             >
@@ -915,7 +1011,7 @@ function StatCard({
     <div
       style={{
         position: 'relative',
-        padding: '18px 18px 16px',
+        padding: 'var(--stat-pad)',
         background: 'rgba(255,255,255,.02)',
         border: '1px solid rgba(255,255,255,.06)',
         borderRadius: 12,
@@ -933,7 +1029,7 @@ function StatCard({
         {k}
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 8 }}>
-        <span style={{ fontSize: 34, fontWeight: 600, letterSpacing: -1.2, color, lineHeight: 1 }}>
+        <span style={{ fontSize: 'var(--stat-font)', fontWeight: 600, letterSpacing: -1.2, color, lineHeight: 1 }}>
           <Counter value={v} format={format ?? ((n) => n.toLocaleString())} />
         </span>
         {suffix && <span style={{ fontSize: 16, color, fontWeight: 500 }}>{suffix}</span>}
@@ -1181,6 +1277,8 @@ function FactBlock({ k, v }: { k: string; v: string }) {
 
 function Skills() {
   const avgFe = Math.round(SKILLS_FRONTEND.reduce((a, b) => a + b.level, 0) / SKILLS_FRONTEND.length);
+  const vw = useViewportWidth();
+  const radarSize = vw < 640 ? 220 : vw < 1024 ? 260 : 300;
   return (
     <section id="skills" style={{ scrollMarginTop: 80 }}>
       <SectionHead
@@ -1210,7 +1308,7 @@ function Skills() {
             }
           >
             <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
-              <RadarChart data={SKILLS_FRONTEND} size={300} color={C} color2={C2} />
+              <RadarChart data={SKILLS_FRONTEND} size={radarSize} color={C} color2={C2} />
               <div
                 style={{
                   position: 'absolute', top: '50%', left: '50%',
@@ -1432,6 +1530,7 @@ function FlagshipCard({ p }: { p: Project }) {
       />
 
       <div
+        className="portfolio-flagship-header"
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '12px 18px',
@@ -1439,7 +1538,7 @@ function FlagshipCard({ p }: { p: Project }) {
           fontFamily: MONO, fontSize: 10,
           letterSpacing: 1.4, textTransform: 'uppercase',
           color: 'rgba(255,255,255,.42)',
-          position: 'relative',
+          position: 'relative', gap: 8,
         }}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1452,7 +1551,7 @@ function FlagshipCard({ p }: { p: Project }) {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'var(--flagship-cols)', minHeight: 360, position: 'relative' }}>
-        <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: 'var(--flagship-pad)', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <span
               style={{
@@ -1694,7 +1793,7 @@ function ProjectCard({ p }: { p: Project }) {
         background: hovered ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.022)',
         border: '1px solid ' + (hovered ? `${p.color}40` : 'rgba(255,255,255,.07)'),
         borderRadius: 12,
-        padding: '20px 22px',
+        padding: 'var(--project-pad)',
         transition: 'border-color .15s, transform .15s, background .15s',
         transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
       }}
@@ -1860,7 +1959,7 @@ function Contact() {
           className="portfolio-contact-card"
           style={{
             position: 'relative',
-            padding: '40px 44px',
+            padding: 'var(--contact-pad)',
             background: `linear-gradient(135deg, ${C}10 0%, transparent 50%, ${C2}10 100%)`,
             border: '1px solid rgba(255,255,255,.07)',
             borderRadius: 14,
@@ -2079,6 +2178,7 @@ export default function Page() {
 
       <main style={{ position: 'relative', zIndex: 1, minWidth: 0 }}>
         <TopBar />
+        <MobileNav active={active} />
         <div
           style={{
             padding: 'var(--main-pad)',

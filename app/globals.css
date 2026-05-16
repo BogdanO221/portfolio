@@ -59,10 +59,7 @@ html {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── Responsive tokens ─────────────────────────────────────────
-   Inline styles read these via var(...). Override at breakpoints
-   so the layout collapses on tablets and phones without touching
-   the component tree. */
+/* ─── Responsive tokens ────────────────────────────────────────── */
 :root {
   --page-cols: 236px 1fr;
   --main-pad: 36px 56px 56px;
@@ -70,77 +67,156 @@ html {
   --section-gap: 64px;
 
   --hero-cols: 1fr 320px;
+  --hero-gap: 48px;
   --hero-h1-size: 72px;
   --hero-h1-letter: -2.5px;
   --hero-h1-line: 0.98;
+  --hero-lead-size: 20px;
 
   --stats-cols: repeat(4, 1fr);
+  --stat-pad: 18px 18px 16px;
+  --stat-font: 34px;
+
   --about-cols: 1.3fr 1fr;
   --skills1-cols: 1fr 1.05fr;
   --skills2-cols: 1.5fr 1fr;
   --flagship-cols: 1.05fr 1fr;
+  --flagship-pad: 28px 32px;
   --other-cols: repeat(2, 1fr);
+  --project-pad: 20px 22px;
   --experience-cols: 20px 170px 1fr 110px;
   --contact-cols: 1.3fr 1fr;
+  --contact-pad: 40px 44px;
+  --panel-pad: 18px;
+  --panel-pad-no-header: 22px;
 
   --section-title-size: 30px;
   --flagship-title-size: 40px;
   --contact-title-size: 38px;
 }
 
-/* Tablet — collapse two-column blocks, hide sidebar + hero portrait. */
+/* Tablet — collapse to 1 col, hide sidebar + hero portrait, show mobile nav. */
 @media (max-width: 1024px) {
   :root {
     --page-cols: 1fr;
-    --main-pad: 28px 24px 40px;
-    --topbar-pad: 12px 24px;
-    --section-gap: 48px;
+    --main-pad: 24px 22px 36px;
+    --topbar-pad: 12px 20px;
+    --section-gap: 44px;
 
     --hero-cols: 1fr;
+    --hero-gap: 28px;
+    --hero-h1-size: 56px;
+    --hero-h1-letter: -1.8px;
+    --hero-h1-line: 1;
+    --hero-lead-size: 17px;
+
     --about-cols: 1fr;
     --skills1-cols: 1fr;
     --skills2-cols: 1fr;
     --flagship-cols: 1fr;
+    --flagship-pad: 22px 24px;
     --other-cols: 1fr;
+    --project-pad: 18px 20px;
     --contact-cols: 1fr;
+    --contact-pad: 28px 26px;
   }
   .portfolio-sidebar,
-  .portfolio-hero-portrait {
+  .portfolio-hero-portrait,
+  .portfolio-topbar-breadcrumb,
+  .portfolio-topbar-clock {
     display: none !important;
+  }
+  .portfolio-mobile-nav {
+    display: block !important;
+  }
+  .portfolio-topbar-mobile-brand {
+    display: inline-flex !important;
   }
 }
 
-/* Phone — shrink hero, stack stats to 2x2, hide tripvice preview & timeline year column. */
+/* Phone — tighter padding, smaller fonts, single-col stats, hide tripvice, rebuild timeline. */
 @media (max-width: 640px) {
   :root {
-    --hero-h1-size: 44px;
-    --hero-h1-letter: -1.2px;
-    --hero-h1-line: 1;
+    --main-pad: 16px 14px 28px;
+    --topbar-pad: 10px 14px;
+    --section-gap: 32px;
+
+    --hero-h1-size: 38px;
+    --hero-h1-letter: -1px;
+    --hero-lead-size: 15px;
+
     --stats-cols: repeat(2, 1fr);
+    --stat-pad: 14px 14px 12px;
+    --stat-font: 26px;
+
+    --section-title-size: 22px;
+    --flagship-title-size: 26px;
+    --contact-title-size: 22px;
+
+    --flagship-pad: 18px 16px;
+    --project-pad: 16px 16px;
+    --contact-pad: 22px 18px;
+    --panel-pad: 14px;
+    --panel-pad-no-header: 16px;
+
     --experience-cols: 1fr;
-    --main-pad: 20px 16px 32px;
-    --topbar-pad: 10px 16px;
-    --section-gap: 40px;
-    --section-title-size: 24px;
-    --flagship-title-size: 28px;
-    --contact-title-size: 26px;
   }
+
   .portfolio-tripvice-preview {
     display: none !important;
   }
+
+  /* Cleaner mobile timeline: pill dot + line on the left, all content stacked. */
   .portfolio-experience-row {
-    border-left: 2px solid rgba(0, 255, 209, 0.4) !important;
-    padding-left: 16px !important;
+    grid-template-columns: 1fr !important;
+    gap: 4px !important;
+    padding: 14px 0 14px 22px !important;
+    position: relative;
   }
-  .portfolio-experience-row > :first-child,
-  .portfolio-experience-row > :last-child {
+  .portfolio-experience-row > :first-child {
     display: none !important;
+  }
+  .portfolio-experience-row::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 22px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #00ffd1;
+    box-shadow: 0 0 8px rgba(0, 255, 209, 0.55);
+  }
+  .portfolio-experience-row::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 32px;
+    bottom: -1px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .portfolio-experience-row:last-child::after {
+    display: none;
   }
   .portfolio-flagship-meta {
     flex-direction: column !important;
     align-items: flex-start !important;
+    gap: 14px !important;
+  }
+  .portfolio-flagship-header {
+    padding: 10px 14px !important;
+    font-size: 9px !important;
+  }
+  .portfolio-flagship-header > span {
+    flex-wrap: wrap;
   }
   .portfolio-contact-card {
-    padding: 24px 20px !important;
+    padding: var(--contact-pad) !important;
   }
+}
+
+/* Mobile nav (off by default, on under 1024). */
+.portfolio-mobile-nav {
+  display: none;
 }
