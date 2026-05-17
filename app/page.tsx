@@ -813,62 +813,6 @@ function TopBar() {
   );
 }
 
-// ─── Mobile nav ───────────────────────────────────────────────────
-
-function MobileNav({ active }: { active: string }) {
-  const sections = [
-    { k: 'overview',   label: 'Overview' },
-    { k: 'about',      label: 'About' },
-    { k: 'skills',     label: 'Skills' },
-    { k: 'projects',   label: 'Projects' },
-    { k: 'experience', label: 'Experience' },
-    { k: 'contact',    label: 'Contact' },
-  ];
-  return (
-    <nav
-      className="portfolio-mobile-nav"
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 4,
-        padding: '8px 14px',
-        background: 'rgba(6,7,11,.85)',
-        backdropFilter: 'blur(18px)',
-        borderBottom: '1px solid rgba(255,255,255,.04)',
-        overflowX: 'auto',
-        whiteSpace: 'nowrap',
-        WebkitOverflowScrolling: 'touch',
-      }}
-    >
-      <div style={{ display: 'inline-flex', gap: 6 }}>
-        {sections.map((s) => {
-          const isActive = active === s.k;
-          return (
-            <a
-              key={s.k}
-              href={`#${s.k}`}
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById(s.k)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
-              style={{
-                padding: '6px 12px', borderRadius: 999,
-                background: isActive ? `${C}14` : 'rgba(255,255,255,.03)',
-                border: '1px solid ' + (isActive ? `${C}55` : 'rgba(255,255,255,.06)'),
-                color: isActive ? C : 'rgba(255,255,255,.7)',
-                fontSize: 12, fontWeight: 500, textDecoration: 'none',
-                fontFamily: 'inherit',
-              }}
-            >
-              {s.label}
-            </a>
-          );
-        })}
-      </div>
-    </nav>
-  );
-}
-
 // ─── Hero ─────────────────────────────────────────────────────────
 
 function Hero() {
@@ -2114,9 +2058,9 @@ function Footer() {
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────
+// ─── Desktop layout ───────────────────────────────────────────────
 
-export default function Page() {
+function DesktopApp() {
   const [active, setActive] = useState('overview');
 
   useEffect(() => {
@@ -2178,7 +2122,6 @@ export default function Page() {
 
       <main style={{ position: 'relative', zIndex: 1, minWidth: 0 }}>
         <TopBar />
-        <MobileNav active={active} />
         <div
           style={{
             padding: 'var(--main-pad)',
@@ -2197,5 +2140,1299 @@ export default function Page() {
         </div>
       </main>
     </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// MOBILE LAYOUT — dedicated single-column app with hamburger menu
+// overlay and a floating bottom dock. Activated by CSS at ≤ 768px.
+// All section IDs prefixed `m-` to avoid colliding with the desktop
+// tree (which is also in the DOM, just display:none on phones).
+// ═════════════════════════════════════════════════════════════════
+
+function MobPanel({
+  label, code, headerRight, children, accent, padding, style,
+}: {
+  label?: string;
+  code?: string;
+  headerRight?: ReactNode;
+  children: ReactNode;
+  accent: string;
+  padding?: number | string;
+  style?: CSSProperties;
+}) {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        background: 'rgba(255,255,255,.022)',
+        border: '1px solid rgba(255,255,255,.06)',
+        borderRadius: 12,
+        backdropFilter: 'blur(8px)',
+        ...style,
+      }}
+    >
+      <Bracket pos="tl" color={accent} size={7} m={4} />
+      <Bracket pos="tr" color={accent} size={7} m={4} />
+      <Bracket pos="bl" color={accent} size={7} m={4} />
+      <Bracket pos="br" color={accent} size={7} m={4} />
+      {label && (
+        <div
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '9px 14px', borderBottom: '1px solid rgba(255,255,255,.05)',
+            fontFamily: MONO, fontSize: 9,
+            letterSpacing: 1.2, textTransform: 'uppercase',
+            color: 'rgba(255,255,255,.42)',
+          }}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ color: accent }}>▸</span>
+            {label}
+            {code && <span style={{ opacity: 0.55 }}>{code}</span>}
+          </span>
+          {headerRight}
+        </div>
+      )}
+      <div style={{ padding: padding ?? (label ? 14 : 16) }}>{children}</div>
+    </div>
+  );
+}
+
+function MobSectionHead({
+  chip, title, sub,
+}: {
+  chip?: string;
+  title: string;
+  sub?: string;
+}) {
+  return (
+    <div>
+      {chip && (
+        <div
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '3px 9px', borderRadius: 999,
+            background: `${C}11`, border: `1px solid ${C}30`,
+            fontFamily: MONO, fontSize: 9,
+            color: C, letterSpacing: 1, marginBottom: 10,
+          }}
+        >
+          {chip}
+        </div>
+      )}
+      <h2 style={{ margin: 0, fontSize: 26, fontWeight: 600, color: '#fff', letterSpacing: -0.5, lineHeight: 1.08 }}>
+        {title}
+      </h2>
+      {sub && (
+        <p style={{ margin: '8px 0 0', fontSize: 13, color: 'rgba(255,255,255,.6)', lineHeight: 1.5 }}>
+          {sub}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─── Mob TopBar + Menu overlay ────────────────────────────────────
+
+function MobTopBar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  return (
+    <>
+      <header
+        style={{
+          position: 'sticky', top: 0, zIndex: 20,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '24px 18px 12px',
+          background: 'linear-gradient(180deg, rgba(6,7,11,.92) 70%, rgba(6,7,11,0))',
+          backdropFilter: 'blur(14px)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div
+            style={{
+              position: 'relative', width: 32, height: 32, borderRadius: 8,
+              background: `linear-gradient(135deg, ${C}, ${C2})`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: BG, fontWeight: 700, fontSize: 12,
+              boxShadow: `0 4px 14px ${C}44`,
+            }}
+          >
+            BO
+            <span
+              style={{
+                position: 'absolute', bottom: -2, right: -2,
+                width: 9, height: 9, borderRadius: '50%',
+                background: '#4ade80', border: `2px solid ${BG}`,
+                boxShadow: '0 0 5px #4ade80',
+              }}
+            />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', lineHeight: 1.1 }}>Bogdan</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', fontFamily: MONO }}>portfolio.v2</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '4px 9px', borderRadius: 999,
+              background: 'rgba(74,222,128,.1)',
+              border: '1px solid rgba(74,222,128,.2)',
+              fontSize: 10, color: '#4ade80', fontWeight: 500,
+              fontFamily: MONO, letterSpacing: 0.5,
+            }}
+          >
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80', animation: 'portfolio-pulse 2s ease-in-out infinite' }} />
+            OPEN
+          </span>
+          <button
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            style={{
+              width: 34, height: 34, borderRadius: 9,
+              background: 'rgba(255,255,255,.05)',
+              border: '1px solid rgba(255,255,255,.08)',
+              color: '#fff', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: 0,
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <path d="M2 4h10M2 7h10M2 10h10" />
+            </svg>
+          </button>
+        </div>
+      </header>
+      {menuOpen && <MobMenuOverlay onClose={() => setMenuOpen(false)} />}
+    </>
+  );
+}
+
+function MobMenuOverlay({ onClose }: { onClose: () => void }) {
+  const sections = [
+    { k: 'overview',   label: 'Overview',   n: '01' },
+    { k: 'about',      label: 'About',      n: '02' },
+    { k: 'skills',     label: 'Skills',     n: '03' },
+    { k: 'projects',   label: 'Projects',   n: '04' },
+    { k: 'experience', label: 'Experience', n: '05' },
+    { k: 'contact',    label: 'Contact',    n: '06' },
+  ];
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 100,
+        background: 'rgba(6,7,11,.95)',
+        backdropFilter: 'blur(18px)',
+        animation: 'mob-fade .2s both',
+        display: 'flex', flexDirection: 'column',
+        padding: '24px 20px 100px',
+        overflowY: 'auto',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+        <span style={{ fontFamily: MONO, fontSize: 10, color: 'rgba(255,255,255,.5)', letterSpacing: 1.2 }}>
+          // MENU
+        </span>
+        <button
+          onClick={onClose}
+          style={{
+            width: 34, height: 34, borderRadius: 9,
+            background: 'rgba(255,255,255,.05)',
+            border: '1px solid rgba(255,255,255,.08)',
+            color: '#fff', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 0,
+          }}
+          aria-label="Close menu"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <path d="M3 3l8 8M11 3l-8 8" />
+          </svg>
+        </button>
+      </div>
+
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+        {sections.map((s, i) => (
+          <a
+            key={s.k}
+            href={`#m-${s.k}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onClose();
+              setTimeout(() => {
+                document.getElementById(`m-${s.k}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 50);
+            }}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '14px 4px',
+              borderBottom: '1px solid rgba(255,255,255,.06)',
+              color: '#fff', textDecoration: 'none',
+              animation: `mob-slide-in .35s ${i * 50}ms both cubic-bezier(.2,.7,.3,1)`,
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: C, letterSpacing: 0.5 }}>{s.n}</span>
+              <span style={{ fontSize: 28, fontWeight: 600, letterSpacing: -0.6 }}>{s.label}</span>
+            </span>
+            <span style={{ color: 'rgba(255,255,255,.4)', fontSize: 16 }}>↗</span>
+          </a>
+        ))}
+      </nav>
+
+      <div
+        style={{
+          marginTop: 24, padding: '14px 16px', borderRadius: 12,
+          background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)',
+        }}
+      >
+        <div style={{ fontFamily: MONO, fontSize: 9, color: 'rgba(255,255,255,.4)', letterSpacing: 1 }}>QUICK CONTACT</div>
+        <div style={{ fontSize: 13, color: '#fff', marginTop: 4, fontWeight: 500 }}>{PROFILE.email}</div>
+        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+          <a href={PROFILE.githubUrl} target="_blank" rel="noreferrer" style={mobInlineLinkStyle()}>GitHub ↗</a>
+          <a href={PROFILE.linkedinUrl} target="_blank" rel="noreferrer" style={mobInlineLinkStyle()}>LinkedIn ↗</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function mobInlineLinkStyle(): CSSProperties {
+  return {
+    flex: 1, textAlign: 'center', textDecoration: 'none',
+    padding: '8px 10px', borderRadius: 7,
+    background: 'rgba(255,255,255,.04)',
+    border: `1px solid ${C}33`,
+    color: C, fontSize: 11, fontWeight: 500,
+    fontFamily: MONO, letterSpacing: 0.5,
+  };
+}
+
+// ─── Mob Hero ─────────────────────────────────────────────────────
+
+function MobHero() {
+  return (
+    <section id="m-overview" style={{ paddingTop: 6, scrollMarginTop: 60 }}>
+      <h1
+        style={{
+          margin: 0, fontSize: 46, lineHeight: 0.98, letterSpacing: -1.8,
+          fontWeight: 600,
+          background: 'linear-gradient(180deg, #fff 30%, rgba(255,255,255,.55) 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}
+      >
+        Bogdan<br />Obradović
+      </h1>
+
+      <div
+        style={{
+          fontFamily: MONO,
+          fontSize: 12, color: 'rgba(255,255,255,.6)', marginTop: 18,
+          display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6,
+        }}
+      >
+        <span style={{ color: C }}>$</span>
+        <span>whoami</span>
+        <span style={{ color: 'rgba(255,255,255,.4)' }}>→</span>
+        <span style={{ color: C }}>traffic_eng</span>
+        <span style={{ color: 'rgba(255,255,255,.4)' }}>+</span>
+        <span style={{ color: C2 }}>frontend_dev</span>
+      </div>
+
+      <p style={{ margin: '16px 0 0', fontSize: 16, lineHeight: 1.5, color: 'rgba(255,255,255,.8)' }}>
+        I design systems that move — from urban traffic flows to interactive frontends.
+        Co-creator of{' '}
+        <a
+          href="https://tripvice.net"
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: '#fff', fontWeight: 500, borderBottom: `1.5px solid ${C}`, textDecoration: 'none' }}
+        >
+          Tripvice.net
+        </a>
+        , an AI travel planner.
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 22 }}>
+        <a
+          href={`mailto:${PROFILE.email}`}
+          style={{
+            padding: '13px 18px', borderRadius: 10,
+            background: '#fff', color: BG,
+            textDecoration: 'none',
+            fontFamily: 'inherit', fontSize: 14, fontWeight: 600,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          }}
+        >
+          Start a project <span style={{ color: C }}>→</span>
+        </a>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <a
+            href="#m-projects"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('m-projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            style={{
+              flex: 1, padding: '12px 14px', borderRadius: 10,
+              background: 'rgba(255,255,255,.04)', color: '#fff',
+              border: '1px solid rgba(255,255,255,.1)',
+              textDecoration: 'none', textAlign: 'center',
+              fontFamily: 'inherit', fontSize: 13, fontWeight: 500,
+            }}
+          >
+            View work
+          </a>
+          <a
+            href={PROFILE.githubUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              flex: 1, padding: '12px 14px', borderRadius: 10,
+              background: 'transparent', color: 'rgba(255,255,255,.75)',
+              border: '1px solid rgba(255,255,255,.08)',
+              textDecoration: 'none', textAlign: 'center',
+              fontFamily: 'inherit', fontSize: 13, fontWeight: 500,
+            }}
+          >
+            GitHub ↗
+          </a>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 22 }}>
+        <MobStatCard k="Years building"   v={PROFILE.yearsCoding}     suffix="+" sub="since 2021"      color={C} />
+        <MobStatCard k="Projects shipped" v={PROFILE.projectsShipped}            sub="web + traffic"   color={C2} />
+        <MobStatCard k="Active users"     v={4200}                               sub="on Tripvice"     color="#fff"    format={(n) => (n / 1000).toFixed(1) + 'k'} />
+        <MobStatCard k="Client rating"    v={49}                                 sub="/ 50 · 23 revs"  color="#fbbf24" format={(n) => (n / 10).toFixed(1)} suffix="★" />
+      </div>
+    </section>
+  );
+}
+
+function MobStatCard({
+  k, v, sub, color, format, suffix,
+}: {
+  k: string;
+  v: number;
+  sub: string;
+  color: string;
+  format?: (n: number) => string;
+  suffix?: string;
+}) {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        padding: '12px 12px 11px',
+        background: 'rgba(255,255,255,.02)',
+        border: '1px solid rgba(255,255,255,.06)',
+        borderRadius: 10,
+      }}
+    >
+      <Bracket pos="tl" color={C} size={6} m={4} />
+      <Bracket pos="br" color={C} size={6} m={4} />
+      <div
+        style={{
+          fontSize: 8.5, color: 'rgba(255,255,255,.5)', textTransform: 'uppercase',
+          letterSpacing: 1, fontFamily: MONO,
+        }}
+      >
+        {k}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginTop: 6 }}>
+        <span style={{ fontSize: 24, fontWeight: 600, letterSpacing: -1, color, lineHeight: 1 }}>
+          <Counter value={v} format={format ?? ((n) => n.toLocaleString())} />
+        </span>
+        {suffix && <span style={{ fontSize: 13, color, fontWeight: 500 }}>{suffix}</span>}
+      </div>
+      <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', marginTop: 3 }}>{sub}</div>
+    </div>
+  );
+}
+
+// ─── Mob About ────────────────────────────────────────────────────
+
+function MobAbout() {
+  return (
+    <section id="m-about" style={{ scrollMarginTop: 60 }}>
+      <MobSectionHead
+        chip="// 02 · ABOUT"
+        title="Two careers, one obsession"
+        sub="Started modeling intersections, watching cities breathe. Frontends turned out to be traffic systems too."
+      />
+
+      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <MobPanel label="STORY" code="// about.md" accent={C}>
+          <div style={{ lineHeight: 1.65, color: 'rgba(255,255,255,.8)', fontSize: 13.5 }}>
+            <p style={{ margin: 0 }}>
+              I&apos;m a <span style={{ color: '#fff', fontWeight: 500 }}>Road &amp; Transport Engineer</span> who
+              fell in love with web frontends somewhere between modeling a signalized intersection in Vissim
+              and trying to make a React form not feel like one.
+            </p>
+            <p style={{ margin: '10px 0 0' }}>
+              Today I split my time between freelance frontend work and side projects — most consequential being{' '}
+              <span style={{ color: C, fontWeight: 500 }}>Tripvice.net</span>. I&apos;m fluent in both vocabularies:
+              signal timing diagrams and React DevTools.
+            </p>
+          </div>
+          <div
+            style={{
+              marginTop: 14, paddingTop: 12,
+              borderTop: '1px dashed rgba(255,255,255,.08)',
+              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12,
+            }}
+          >
+            <MobFact k="Based in" v={PROFILE.location} />
+            <MobFact k="Languages" v="EN · SR · DE" />
+            <MobFact k="Workspace" v="Remote / Hybrid" />
+            <MobFact k="Response" v="< 24h" />
+          </div>
+        </MobPanel>
+
+        <MobPanel label="APPROACH" code="// principles" accent={C2}>
+          {[
+            { n: '01', t: 'Model the flow first',   d: 'State, edges and failure modes before pixels.' },
+            { n: '02', t: 'Optimize the slow path', d: 'Edge cases are the product. Smooth them.' },
+            { n: '03', t: 'Ship, measure, iterate', d: 'Real users beat hypotheticals. Always.' },
+          ].map((p, i) => (
+            <div
+              key={p.n}
+              style={{
+                display: 'grid', gridTemplateColumns: '28px 1fr', gap: 10,
+                paddingBottom: i < 2 ? 12 : 0,
+                paddingTop: i > 0 ? 12 : 0,
+                borderTop: i > 0 ? '1px dashed rgba(255,255,255,.05)' : 'none',
+              }}
+            >
+              <span style={{ fontFamily: MONO, fontSize: 11, color: C2, paddingTop: 1 }}>{p.n}</span>
+              <div>
+                <div style={{ fontSize: 13, color: '#fff', fontWeight: 500 }}>{p.t}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.5 }}>{p.d}</div>
+              </div>
+            </div>
+          ))}
+        </MobPanel>
+      </div>
+    </section>
+  );
+}
+
+function MobFact({ k, v }: { k: string; v: string }) {
+  return (
+    <div>
+      <div
+        style={{
+          fontSize: 9, color: 'rgba(255,255,255,.4)',
+          fontFamily: MONO,
+          letterSpacing: 1, textTransform: 'uppercase', marginBottom: 3,
+        }}
+      >
+        {k}
+      </div>
+      <div style={{ fontSize: 12.5, color: '#fff', fontWeight: 500 }}>{v}</div>
+    </div>
+  );
+}
+
+// ─── Mob Skills (radar + tab toggle + bars + heatmap) ─────────────
+
+function MobSkills() {
+  const [tab, setTab] = useState<'fe' | 'eng'>('fe');
+  const data = tab === 'fe' ? SKILLS_FRONTEND : SKILLS_ENGINEERING;
+  const avg = Math.round(data.reduce((a, b) => a + b.level, 0) / data.length);
+  const activeColor = tab === 'fe' ? C : C2;
+  const otherColor  = tab === 'fe' ? C2 : C;
+
+  return (
+    <section id="m-skills" style={{ scrollMarginTop: 60 }}>
+      <MobSectionHead
+        chip="// 03 · SKILLS"
+        title="Built for both worlds"
+        sub="Self-assessed on a /100 scale."
+      />
+
+      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <MobPanel
+          label="RADAR"
+          code={`// ${tab === 'fe' ? 'frontend' : 'engineering'}`}
+          accent={activeColor}
+          headerRight={
+            <span style={{ fontFamily: MONO, fontSize: 9, color: 'rgba(255,255,255,.5)' }}>
+              avg <span style={{ color: '#fff' }}>{avg}</span>
+            </span>
+          }
+        >
+          <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
+            <RadarChart data={data} size={240} color={activeColor} color2={otherColor} />
+            <div
+              style={{
+                position: 'absolute', top: '50%', left: '50%',
+                transform: 'translate(-50%, -50%)', pointerEvents: 'none', textAlign: 'center',
+              }}
+            >
+              <div style={{ fontFamily: MONO, fontSize: 8.5, color: 'rgba(255,255,255,.4)', letterSpacing: 1 }}>AVG</div>
+              <div style={{ fontSize: 22, fontWeight: 600, color: '#fff', lineHeight: 1 }}>{avg}</div>
+            </div>
+          </div>
+          <div
+            style={{
+              display: 'flex', gap: 4, marginTop: 12,
+              padding: 3, borderRadius: 8,
+              background: 'rgba(255,255,255,.04)',
+              border: '1px solid rgba(255,255,255,.05)',
+            }}
+          >
+            {([{ k: 'fe', label: 'Frontend' }, { k: 'eng', label: 'Engineering' }] as const).map((t) => (
+              <button
+                key={t.k}
+                onClick={() => setTab(t.k)}
+                style={{
+                  flex: 1, padding: '7px 10px', borderRadius: 6,
+                  background: tab === t.k ? 'rgba(255,255,255,.07)' : 'transparent',
+                  color: tab === t.k ? '#fff' : 'rgba(255,255,255,.55)',
+                  border: 'none', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 11.5, fontWeight: 500,
+                  transition: 'all .12s',
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </MobPanel>
+
+        <MobPanel label="DETAIL" code="// /100" accent={activeColor}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {data.map((s, i) => (
+              <div key={s.name}>
+                <div
+                  style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    fontFamily: MONO, fontSize: 11, marginBottom: 4,
+                  }}
+                >
+                  <span style={{ color: 'rgba(255,255,255,.85)' }}>{s.name}</span>
+                  <span style={{ color: activeColor, fontVariantNumeric: 'tabular-nums' }}>{s.level}</span>
+                </div>
+                <div style={{ height: 3, background: 'rgba(255,255,255,.05)', borderRadius: 2, overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      height: '100%', width: s.level + '%',
+                      background: `linear-gradient(90deg, ${activeColor}, ${otherColor})`,
+                      boxShadow: `0 0 5px ${activeColor}66`,
+                      animation: `portfolio-grow 1s ${i * 60}ms ease-out both`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </MobPanel>
+
+        <MobPanel
+          label="ACTIVITY"
+          code="// 12 weeks"
+          accent={C}
+          headerRight={
+            <span style={{ fontFamily: MONO, fontSize: 9, color: 'rgba(255,255,255,.55)' }}>
+              <span style={{ color: '#fff' }}>{COMMITS_30D.reduce((a, b) => a + b, 0)}</span> commits
+            </span>
+          }
+        >
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 3 }}>
+            {Array.from({ length: 12 }).map((_, col) => (
+              <div key={col} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {Array.from({ length: 7 }).map((_, row) => {
+                  const v = COMMITS_30D[col * 7 + row];
+                  const opacity = 0.1 + (v / 5) * 0.85;
+                  return (
+                    <div
+                      key={row}
+                      style={{
+                        width: '100%', aspectRatio: '1',
+                        background: v === 0 ? 'rgba(255,255,255,.04)' : C,
+                        opacity: v === 0 ? 1 : opacity,
+                        borderRadius: 1.5,
+                        boxShadow: v > 3 ? `0 0 4px ${C}` : 'none',
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10,
+              fontFamily: MONO, fontSize: 9, color: 'rgba(255,255,255,.4)',
+            }}
+          >
+            <span>12w ago</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+              <span>less</span>
+              {[0.12, 0.35, 0.6, 0.85, 1].map((o, i) => (
+                <span key={i} style={{ width: 7, height: 7, borderRadius: 2, background: C, opacity: o }} />
+              ))}
+              <span>more</span>
+            </div>
+            <span>today</span>
+          </div>
+        </MobPanel>
+      </div>
+    </section>
+  );
+}
+
+// ─── Mob Projects ─────────────────────────────────────────────────
+
+function MobProjects() {
+  return (
+    <section id="m-projects" style={{ scrollMarginTop: 60 }}>
+      <MobSectionHead
+        chip="// 04 · PROJECTS"
+        title="Selected work"
+        sub="A flagship and two learning vehicles."
+      />
+      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <MobFlagship p={PROJECTS[0]} />
+        {PROJECTS.slice(1).map((p) => (
+          <MobProjectCard key={p.id} p={p} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function MobFlagship({ p }: { p: Project }) {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        background: 'rgba(255,255,255,.022)',
+        border: '1px solid rgba(255,255,255,.07)',
+        borderRadius: 14,
+        overflow: 'hidden',
+      }}
+    >
+      <Bracket pos="tl" color={C} size={7} m={4} />
+      <Bracket pos="tr" color={C} size={7} m={4} />
+      <Bracket pos="bl" color={C} size={7} m={4} />
+      <Bracket pos="br" color={C} size={7} m={4} />
+      <div
+        style={{
+          position: 'absolute', top: -60, right: -50, width: 240, height: 240,
+          background: `radial-gradient(circle, ${p.color}22, transparent 70%)`,
+          filter: 'blur(20px)', pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '10px 14px',
+          borderBottom: '1px solid rgba(255,255,255,.05)',
+          fontFamily: MONO, fontSize: 9,
+          letterSpacing: 1.2, textTransform: 'uppercase',
+          color: 'rgba(255,255,255,.42)',
+          position: 'relative',
+        }}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ color: C }}>▸</span> FLAGSHIP <span style={{ opacity: 0.55 }}>// 001</span>
+        </span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#4ade80' }}>
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 5px #4ade80' }} />
+          LIVE
+        </span>
+      </div>
+
+      <div style={{ padding: '18px 18px 16px', position: 'relative' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+          <span
+            style={{
+              padding: '2px 8px', borderRadius: 999,
+              background: `${p.color}1a`, color: p.color,
+              fontSize: 9, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase',
+              fontFamily: MONO,
+            }}
+          >
+            {p.tag}
+          </span>
+          <span style={{ fontSize: 10.5, color: 'rgba(255,255,255,.5)', fontFamily: MONO }}>
+            {p.year} · {p.role}
+          </span>
+        </div>
+        <h3 style={{ margin: 0, fontSize: 30, fontWeight: 600, letterSpacing: -0.8, color: '#fff', lineHeight: 1 }}>
+          {p.name}
+        </h3>
+        <div style={{ fontFamily: MONO, fontSize: 11, color: p.color, marginTop: 6 }}>
+          ↗ {p.url}
+        </div>
+
+        <p style={{ margin: '12px 0 14px', fontSize: 13.5, lineHeight: 1.55, color: 'rgba(255,255,255,.75)' }}>
+          {p.description}
+        </p>
+
+        <MobTripvicePreview />
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 14 }}>
+          {p.stack.map((s) => (
+            <span
+              key={s}
+              style={{
+                padding: '3px 8px', borderRadius: 4,
+                background: 'rgba(255,255,255,.04)',
+                border: '1px solid rgba(255,255,255,.06)',
+                fontFamily: MONO, fontSize: 10,
+                color: 'rgba(255,255,255,.75)',
+              }}
+            >
+              {s}
+            </span>
+          ))}
+        </div>
+
+        <div
+          style={{
+            marginTop: 14, paddingTop: 12,
+            borderTop: '1px dashed rgba(255,255,255,.08)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+          }}
+        >
+          <div style={{ display: 'flex', gap: 16 }}>
+            <MobMini k="Users"  v="4.2k"  color={C} />
+            <MobMini k="Rating" v="4.7★" color="#fbbf24" />
+          </div>
+          <a
+            href={`https://${p.url}`}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              padding: '7px 12px', borderRadius: 7,
+              background: '#fff', color: BG, textDecoration: 'none',
+              fontSize: 11.5, fontWeight: 600,
+            }}
+          >
+            Visit <span>↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobMini({ k, v, color }: { k: string; v: string; color: string }) {
+  return (
+    <div>
+      <div
+        style={{
+          fontSize: 8.5, color: 'rgba(255,255,255,.45)',
+          fontFamily: MONO,
+          letterSpacing: 1, textTransform: 'uppercase',
+        }}
+      >
+        {k}
+      </div>
+      <div style={{ fontSize: 13, color, fontWeight: 600, marginTop: 2 }}>{v}</div>
+    </div>
+  );
+}
+
+function MobTripvicePreview() {
+  const days = [
+    { d: 'D1', t: 'Alfama walk · Pastéis · Fado',  c: C },
+    { d: 'D2', t: 'Belém · Time Out · Sunset',    c: C2 },
+    { d: 'D3', t: 'Sintra · Pena Palace',          c: C },
+  ];
+  return (
+    <div
+      style={{
+        position: 'relative',
+        padding: 12, borderRadius: 10,
+        background: 'rgba(6,7,11,.7)',
+        border: '1px solid rgba(255,255,255,.08)',
+      }}
+    >
+      <div
+        style={{
+          padding: '7px 9px', borderRadius: 6,
+          background: 'rgba(255,255,255,.04)',
+          border: '1px solid rgba(255,255,255,.06)',
+          fontSize: 11, color: 'rgba(255,255,255,.9)',
+          fontFamily: MONO,
+          display: 'flex', alignItems: 'center', gap: 6,
+        }}
+      >
+        <span style={{ color: C }}>›</span>
+        <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          5 days in Lisbon, foodie
+        </span>
+        <span style={{ width: 5, height: 11, background: C, animation: 'portfolio-blink 1s steps(2) infinite' }} />
+      </div>
+      <div
+        style={{
+          display: 'flex', justifyContent: 'space-between',
+          marginTop: 10, marginBottom: 4,
+          fontSize: 10, color: 'rgba(255,255,255,.5)',
+        }}
+      >
+        <span>Itinerary</span>
+        <span style={{ fontFamily: MONO, color: C }}>generating…</span>
+      </div>
+      {days.map((d, i) => (
+        <div
+          key={i}
+          style={{
+            display: 'grid', gridTemplateColumns: '32px 1fr', gap: 8, alignItems: 'center',
+            padding: '6px 0',
+            borderTop: i === 0 ? 'none' : '1px solid rgba(255,255,255,.05)',
+            animation: `portfolio-fade-up .5s ${200 + i * 120}ms both`,
+          }}
+        >
+          <span
+            style={{
+              padding: '2px 5px', borderRadius: 3,
+              background: `${d.c}15`, color: d.c,
+              fontSize: 9, fontWeight: 600,
+              fontFamily: MONO, textAlign: 'center',
+            }}
+          >
+            {d.d}
+          </span>
+          <span style={{ fontSize: 11.5, color: 'rgba(255,255,255,.88)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {d.t}
+          </span>
+        </div>
+      ))}
+      <div
+        style={{
+          marginTop: 8, paddingTop: 8,
+          borderTop: '1px solid rgba(255,255,255,.05)',
+          display: 'flex', justifyContent: 'space-between',
+          fontSize: 10.5,
+        }}
+      >
+        <span style={{ color: 'rgba(255,255,255,.5)' }}>Budget</span>
+        <span style={{ color: '#fff', fontVariantNumeric: 'tabular-nums', fontWeight: 500 }}>€820 — €1,140</span>
+      </div>
+    </div>
+  );
+}
+
+function MobProjectCard({ p }: { p: Project }) {
+  return (
+    <a
+      href={PROFILE.githubUrl}
+      target="_blank"
+      rel="noreferrer"
+      style={{
+        position: 'relative', display: 'block', textDecoration: 'none',
+        background: 'rgba(255,255,255,.022)',
+        border: '1px solid rgba(255,255,255,.07)',
+        borderRadius: 12,
+        padding: '14px 16px',
+        color: 'inherit',
+      }}
+    >
+      <Bracket pos="tl" color={p.color} size={6} m={4} />
+      <Bracket pos="br" color={p.color} size={6} m={4} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span
+            style={{
+              width: 28, height: 28, borderRadius: 7,
+              background: `${p.color}1a`, border: `1px solid ${p.color}40`,
+              color: p.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: MONO, fontSize: 12, fontWeight: 700,
+            }}
+          >
+            {p.name[0]}
+          </span>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#fff', lineHeight: 1.1 }}>{p.name}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,.5)', fontFamily: MONO, letterSpacing: 0.3, marginTop: 1 }}>
+              {p.year} · {p.role} · {p.metrics.status}
+            </div>
+          </div>
+        </div>
+        <span style={{ color: p.color, fontSize: 14 }}>↗</span>
+      </div>
+      <p style={{ margin: 0, fontSize: 12.5, color: 'rgba(255,255,255,.68)', lineHeight: 1.5 }}>{p.summary}</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 10 }}>
+        {p.stack.map((s) => (
+          <span
+            key={s}
+            style={{
+              padding: '2px 7px', borderRadius: 3,
+              background: 'rgba(255,255,255,.035)',
+              fontFamily: MONO, fontSize: 9.5,
+              color: 'rgba(255,255,255,.65)',
+            }}
+          >
+            {s}
+          </span>
+        ))}
+      </div>
+    </a>
+  );
+}
+
+// ─── Mob Experience ───────────────────────────────────────────────
+
+function MobExperience() {
+  return (
+    <section id="m-experience" style={{ scrollMarginTop: 60 }}>
+      <MobSectionHead
+        chip="// 05 · TIMELINE"
+        title="From signal timing to streaming UIs"
+        sub="Five years across two disciplines."
+      />
+
+      <div style={{ marginTop: 16 }}>
+        <MobPanel padding={16} accent={C}>
+          <div style={{ position: 'relative' }}>
+            <div
+              style={{
+                position: 'absolute', left: 5, top: 6, bottom: 6, width: 1,
+                background: `linear-gradient(180deg, ${C}, rgba(255,255,255,.06))`,
+              }}
+            />
+            {EXPERIENCE.map((e, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'grid', gridTemplateColumns: '16px 1fr',
+                  gap: 12, alignItems: 'flex-start',
+                  padding: '10px 0',
+                  borderBottom: i < EXPERIENCE.length - 1 ? '1px dashed rgba(255,255,255,.05)' : 'none',
+                }}
+              >
+                <div
+                  style={{
+                    width: 16, position: 'relative',
+                    display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: 4,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 9, height: 9, borderRadius: '50%',
+                      background: e.kind === 'edu' ? BG : C,
+                      border: `1.5px solid ${e.kind === 'edu' ? C2 : C}`,
+                      boxShadow: `0 0 6px ${e.kind === 'edu' ? C2 : C}66`,
+                      zIndex: 1,
+                    }}
+                  />
+                </div>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+                    <span style={{ fontFamily: MONO, fontSize: 10.5, color: 'rgba(255,255,255,.5)' }}>
+                      {e.year}
+                    </span>
+                    <span
+                      style={{
+                        padding: '2px 7px', borderRadius: 999,
+                        background: e.kind === 'edu' ? `${C2}14` : `${C}14`,
+                        color: e.kind === 'edu' ? C2 : C,
+                        fontSize: 9, fontWeight: 600, letterSpacing: 0.8,
+                        fontFamily: MONO, textTransform: 'uppercase',
+                      }}
+                    >
+                      {e.kind === 'edu' ? 'edu' : 'work'}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13.5, color: '#fff', fontWeight: 500, marginTop: 3 }}>{e.role}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,.55)', marginTop: 2 }}>{e.org}</div>
+                  <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,.6)', marginTop: 5, lineHeight: 1.45 }}>
+                    {e.detail}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </MobPanel>
+      </div>
+    </section>
+  );
+}
+
+// ─── Mob Contact ──────────────────────────────────────────────────
+
+function MobContact() {
+  return (
+    <section id="m-contact" style={{ scrollMarginTop: 60 }}>
+      <MobSectionHead chip="// 06 · CONTACT" title="Let's build something" />
+
+      <div
+        style={{
+          position: 'relative', marginTop: 16,
+          padding: '24px 20px',
+          background: `linear-gradient(135deg, ${C}10 0%, transparent 50%, ${C2}10 100%)`,
+          border: '1px solid rgba(255,255,255,.07)',
+          borderRadius: 14,
+          overflow: 'hidden',
+        }}
+      >
+        <Bracket pos="tl" color={C} size={7} m={4} />
+        <Bracket pos="tr" color={C} size={7} m={4} />
+        <Bracket pos="bl" color={C} size={7} m={4} />
+        <Bracket pos="br" color={C} size={7} m={4} />
+
+        <div
+          style={{
+            fontFamily: MONO, fontSize: 10,
+            color: C, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8,
+          }}
+        >
+          <span style={{ color: C }}>$</span> hire bogdan
+        </div>
+        <h3
+          style={{
+            margin: 0, fontSize: 26, fontWeight: 600, letterSpacing: -0.8,
+            color: '#fff', lineHeight: 1.1,
+          }}
+        >
+          Got a flow that needs untangling?
+        </h3>
+        <p style={{ margin: '10px 0 16px', fontSize: 13, color: 'rgba(255,255,255,.7)', lineHeight: 1.5 }}>
+          I take a handful of freelance projects each quarter. Drop a line and tell me what&apos;s up.
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <a
+            href={`mailto:${PROFILE.email}`}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '12px 14px', borderRadius: 10,
+              background: 'rgba(255,255,255,.05)',
+              border: '1px solid rgba(255,255,255,.08)',
+              textDecoration: 'none', color: '#fff',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,.5)', fontFamily: MONO, letterSpacing: 1, textTransform: 'uppercase' }}>
+                EMAIL
+              </div>
+              <div style={{ fontSize: 13.5, fontWeight: 500, marginTop: 2 }}>{PROFILE.email}</div>
+            </div>
+            <span style={{ color: C, fontSize: 18 }}>→</span>
+          </a>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <a href={PROFILE.githubUrl} target="_blank" rel="noreferrer" style={mobContactSubStyle()}>
+              <span style={mobContactSubLabelStyle}>GITHUB</span>
+              <span style={mobContactSubValStyle}>@{PROFILE.github} ↗</span>
+            </a>
+            <a href={PROFILE.linkedinUrl} target="_blank" rel="noreferrer" style={mobContactSubStyle()}>
+              <span style={mobContactSubLabelStyle}>LINKEDIN</span>
+              <span style={mobContactSubValStyle}>in/bogdan-o ↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div
+          style={{
+            marginTop: 16, paddingTop: 14,
+            borderTop: '1px dashed rgba(255,255,255,.08)',
+            display: 'flex', flexWrap: 'wrap', gap: 12,
+            fontSize: 11, color: 'rgba(255,255,255,.55)',
+          }}
+        >
+          <span><span style={{ color: '#4ade80' }}>●</span> Reply within 24h</span>
+          <span><span style={{ color: C }}>●</span> Remote-first</span>
+          <span><span style={{ color: C2 }}>●</span> CET hours</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const mobContactSubLabelStyle: CSSProperties = {
+  fontSize: 9, color: 'rgba(255,255,255,.5)',
+  fontFamily: MONO, letterSpacing: 1, textTransform: 'uppercase',
+};
+const mobContactSubValStyle: CSSProperties = {
+  fontSize: 12, color: '#fff', marginTop: 3,
+};
+function mobContactSubStyle(): CSSProperties {
+  return {
+    display: 'flex', flexDirection: 'column',
+    padding: '10px 12px', borderRadius: 9,
+    background: 'rgba(255,255,255,.04)',
+    border: '1px solid rgba(255,255,255,.08)',
+    textDecoration: 'none', color: '#fff',
+  };
+}
+
+// ─── Mob Footer ───────────────────────────────────────────────────
+
+function MobFooter() {
+  return (
+    <footer
+      style={{
+        paddingTop: 16,
+        borderTop: '1px solid rgba(255,255,255,.05)',
+        display: 'flex', flexDirection: 'column', gap: 6,
+        fontSize: 10, color: 'rgba(255,255,255,.4)',
+        fontFamily: MONO, letterSpacing: 0.3,
+        textAlign: 'center',
+      }}
+    >
+      <span>© 2026 Bogdan Obradović · Kragujevac, RS</span>
+      <span><span style={{ color: C }}>●</span> all systems operational</span>
+    </footer>
+  );
+}
+
+// ─── Mob Dock (floating bottom nav) ───────────────────────────────
+
+function MobDock() {
+  const items = [
+    { k: 'overview',   label: 'Home',   icon: <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8l6-5 6 5v7H3z"/></svg> },
+    { k: 'skills',     label: 'Skills', icon: <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 1.5L15 5v8L9 16.5 3 13V5z"/></svg> },
+    { k: 'projects',   label: 'Work',   icon: <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><rect x="2" y="3" width="6" height="6"/><rect x="10" y="3" width="6" height="6"/><rect x="2" y="11" width="6" height="6"/><rect x="10" y="11" width="6" height="6"/></svg> },
+    { k: 'experience', label: 'Logs',   icon: <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 4h12M3 9h12M3 14h8"/></svg> },
+    { k: 'contact',    label: 'Hi',     icon: <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M2 5l7 5 7-5v9H2z"/></svg> },
+  ];
+
+  const [active, setActive] = useState('overview');
+  useEffect(() => {
+    const els = items
+      .map((i) => document.getElementById(`m-${i.k}`))
+      .filter(Boolean) as HTMLElement[];
+    if (!els.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id.replace(/^m-/, ''));
+        });
+      },
+      { rootMargin: '-25% 0px -55% 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: 'fixed', bottom: 18, left: 14, right: 14, zIndex: 50,
+        display: 'flex', justifyContent: 'space-around',
+        padding: '8px 6px',
+        background: 'rgba(12,14,20,.85)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        border: '1px solid rgba(255,255,255,.07)',
+        borderRadius: 22,
+        boxShadow: '0 18px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.03) inset',
+      }}
+    >
+      {items.map((it) => {
+        const isActive = active === it.k;
+        return (
+          <a
+            key={it.k}
+            href={`#m-${it.k}`}
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById(`m-${it.k}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              gap: 2, padding: '6px 10px', borderRadius: 14,
+              color: isActive ? BG : 'rgba(255,255,255,.6)',
+              background: isActive ? C : 'transparent',
+              textDecoration: 'none',
+              fontSize: 9.5, fontWeight: 600, letterSpacing: 0.3,
+              transition: 'all .2s cubic-bezier(.2,.7,.3,1)',
+              boxShadow: isActive ? `0 4px 14px ${C}55` : 'none',
+              minWidth: 44,
+            }}
+          >
+            <span style={{ display: 'flex' }}>{it.icon}</span>
+            <span>{it.label}</span>
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Mobile root ──────────────────────────────────────────────────
+
+function MobileApp() {
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        background: BG,
+        color: '#e4e4e7',
+        fontFamily: 'var(--font-space-grotesk), Inter, -apple-system, sans-serif',
+        position: 'relative',
+        paddingBottom: 92,
+        overflowX: 'hidden',
+      }}
+    >
+      {/* Ambient gradients */}
+      <div
+        style={{
+          position: 'absolute', top: -120, right: -120, width: 380, height: 380,
+          background: 'radial-gradient(circle, rgba(0,255,209,.35), transparent 65%)',
+          filter: 'blur(30px)', pointerEvents: 'none',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute', top: 600, left: -160, width: 360, height: 360,
+          background: 'radial-gradient(circle, rgba(124,92,255,.32), transparent 65%)',
+          filter: 'blur(30px)', pointerEvents: 'none',
+        }}
+      />
+      {/* Grid texture */}
+      <div
+        style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          maskImage: 'radial-gradient(ellipse 80% 50% at 50% 20%, #000 30%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 20%, #000 30%, transparent 80%)',
+        }}
+      />
+
+      <MobTopBar />
+
+      <div style={{ position: 'relative', padding: '0 20px', display: 'flex', flexDirection: 'column', gap: 40 }}>
+        <MobHero />
+        <MobAbout />
+        <MobSkills />
+        <MobProjects />
+        <MobExperience />
+        <MobContact />
+        <MobFooter />
+      </div>
+
+      <MobDock />
+    </div>
+  );
+}
+
+// ─── Root: render both, CSS swap controls visibility ──────────────
+
+export default function Page() {
+  return (
+    <>
+      <div className="portfolio-desktop-app">
+        <DesktopApp />
+      </div>
+      <div className="portfolio-mobile-app">
+        <MobileApp />
+      </div>
+    </>
   );
 }

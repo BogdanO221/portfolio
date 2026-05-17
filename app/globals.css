@@ -59,7 +59,18 @@ html {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── Responsive tokens ────────────────────────────────────────── */
+@keyframes mob-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes mob-slide-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Desktop responsive tokens (used for the desktop tree only;
+   the mobile layout below ≤768px renders a different tree). ───── */
 :root {
   --page-cols: 236px 1fr;
   --main-pad: 36px 56px 56px;
@@ -95,7 +106,7 @@ html {
   --contact-title-size: 38px;
 }
 
-/* Tablet — collapse to 1 col, hide sidebar + hero portrait, show mobile nav. */
+/* Tablet (769–1024) — desktop tree but single column, no sidebar/portrait. */
 @media (max-width: 1024px) {
   :root {
     --page-cols: 1fr;
@@ -126,97 +137,16 @@ html {
   .portfolio-topbar-clock {
     display: none !important;
   }
-  .portfolio-mobile-nav {
-    display: block !important;
-  }
   .portfolio-topbar-mobile-brand {
     display: inline-flex !important;
   }
 }
 
-/* Phone — tighter padding, smaller fonts, single-col stats, hide tripvice, rebuild timeline. */
-@media (max-width: 640px) {
-  :root {
-    --main-pad: 16px 14px 28px;
-    --topbar-pad: 10px 14px;
-    --section-gap: 32px;
+/* ≤ 768px swap: render dedicated mobile layout, hide desktop tree. */
+.portfolio-desktop-app { display: block; }
+.portfolio-mobile-app  { display: none; }
 
-    --hero-h1-size: 38px;
-    --hero-h1-letter: -1px;
-    --hero-lead-size: 15px;
-
-    --stats-cols: repeat(2, 1fr);
-    --stat-pad: 14px 14px 12px;
-    --stat-font: 26px;
-
-    --section-title-size: 22px;
-    --flagship-title-size: 26px;
-    --contact-title-size: 22px;
-
-    --flagship-pad: 18px 16px;
-    --project-pad: 16px 16px;
-    --contact-pad: 22px 18px;
-    --panel-pad: 14px;
-    --panel-pad-no-header: 16px;
-
-    --experience-cols: 1fr;
-  }
-
-  .portfolio-tripvice-preview {
-    display: none !important;
-  }
-
-  /* Cleaner mobile timeline: pill dot + line on the left, all content stacked. */
-  .portfolio-experience-row {
-    grid-template-columns: 1fr !important;
-    gap: 4px !important;
-    padding: 14px 0 14px 22px !important;
-    position: relative;
-  }
-  .portfolio-experience-row > :first-child {
-    display: none !important;
-  }
-  .portfolio-experience-row::before {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 22px;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: #00ffd1;
-    box-shadow: 0 0 8px rgba(0, 255, 209, 0.55);
-  }
-  .portfolio-experience-row::after {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 32px;
-    bottom: -1px;
-    width: 1px;
-    background: rgba(255, 255, 255, 0.08);
-  }
-  .portfolio-experience-row:last-child::after {
-    display: none;
-  }
-  .portfolio-flagship-meta {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 14px !important;
-  }
-  .portfolio-flagship-header {
-    padding: 10px 14px !important;
-    font-size: 9px !important;
-  }
-  .portfolio-flagship-header > span {
-    flex-wrap: wrap;
-  }
-  .portfolio-contact-card {
-    padding: var(--contact-pad) !important;
-  }
-}
-
-/* Mobile nav (off by default, on under 1024). */
-.portfolio-mobile-nav {
-  display: none;
+@media (max-width: 768px) {
+  .portfolio-desktop-app { display: none !important; }
+  .portfolio-mobile-app  { display: block !important; }
 }
