@@ -25,16 +25,16 @@ const PROFILE = {
   githubUrl: 'https://github.com/BogdanO221',
   linkedinUrl: 'https://www.linkedin.com/in/bogdan-obradovic-8a9230272/',
   yearsCoding: 4,
-  projectsShipped: 12,
+  projectsShipped: 9,
 };
 
 const SKILLS_FRONTEND = [
-  { name: 'React',         level: 92 },
-  { name: 'TypeScript',    level: 86 },
-  { name: 'Tailwind CSS',  level: 94 },
-  { name: 'Next.js',       level: 78 },
-  { name: 'Framer Motion', level: 80 },
-  { name: 'Node.js',       level: 70 },
+  { name: 'React',         level: 80 },
+  { name: 'JavaScript',    level: 82 },
+  { name: 'Next.js',       level: 70 },
+  { name: 'TypeScript',    level: 60 },
+  { name: 'HTML & CSS',    level: 88 },
+  { name: 'Redux',         level: 65 },
 ];
 
 const SKILLS_ENGINEERING = [
@@ -63,31 +63,32 @@ type Project = {
 const PROJECTS: Project[] = [
   {
     id: 'tripvice',
-    name: 'Tripvice.net',
+    name: 'TripVice',
     tag: 'flagship',
-    role: 'Co-creator · Frontend Lead',
-    year: 2024,
+    role: 'Co-creator · Frontend & product',
+    year: 2026,
     summary:
-      'AI travel planner that turns natural-language prompts into day-by-day itineraries with maps, bookings & budgets.',
+      'Travel planning platform that finds the cheapest flight + hotel combination for a destination, dates and budget.',
     description:
-      'Tripvice converts a single sentence — "5 days in Lisbon, mid-range, foodie" — into a structured itinerary with day plans, geocoded stops, transit hints and cost estimates. I built the React frontend, the itinerary canvas, and the streaming response UI.',
-    stack: ['React', 'Next.js', 'Tailwind', 'OpenAI', 'Mapbox', 'PostgreSQL'],
-    metrics: { users: '4.2k', rating: 4.7, status: 'live' },
-    url: 'tripvice.net',
+      'One search instead of thirty open tabs. I worked across the frontend: the search and results screens, the destination discovery pages, and the interface for "Vice", a chat assistant that plans a trip from a plain-language prompt. Plenty of product thinking too: deciding what a traveller needs to see and cutting what gets in the way of booking.',
+    stack: ['React', 'Next.js', 'Responsive UI', 'API-driven search'],
+    metrics: { status: 'beta' },
+    url: 'tripvice-web.vercel.app',
     color: '#00ffd1',
   },
   {
     id: 'newsapp',
-    name: 'NewsApp',
+    name: 'News App',
     tag: 'product',
     role: 'Solo',
-    year: 2023,
+    year: 2025,
     summary:
-      'Topic-clustered news reader with saved-for-later, keyboard nav and a focus-mode reader view.',
+      'A small news site in Next.js with a list of articles, a page for each article and a form for adding new ones.',
     description:
-      'A React news client that clusters headlines into topics, supports keyboard-only navigation (j/k for items, o to open) and ships with a distraction-free reader.',
-    stack: ['React', 'Vite', 'NewsAPI', 'CSS Modules'],
-    metrics: { stars: 38, status: 'maintained' },
+      'Built with the Next.js pages router: articles are stored in MongoDB, loaded through API routes and shown on dynamic article pages. Includes a form for posting new articles and a responsive layout.',
+    stack: ['Next.js', 'React', 'MongoDB', 'API routes'],
+    metrics: { status: 'live' },
+    url: 'nextjs-app-livid-chi.vercel.app',
     color: '#7c5cff',
   },
   {
@@ -95,62 +96,49 @@ const PROJECTS: Project[] = [
     name: 'PigGame',
     tag: 'classic',
     role: 'Solo',
-    year: 2022,
+    year: 2025,
     summary:
-      'The dice game, rebuilt in vanilla JS as a learning vehicle for state machines and DOM patterns.',
+      'The dice game, rebuilt in vanilla JS as practice for game state and DOM manipulation.',
     description:
-      'Two-player Pig with hold/roll mechanics, score-to-100, animated dice and a clean state machine.',
+      'Two-player Pig with hold/roll mechanics, score-to-100 and dice images, built in plain HTML, CSS and JavaScript.',
     stack: ['Vanilla JS', 'HTML', 'CSS'],
-    metrics: { stars: 12, status: 'archived' },
+    metrics: { status: 'practice' },
     color: '#ffb84d',
   },
 ];
 
 const EXPERIENCE = [
   {
-    year: '2024 — present',
-    role: 'Freelance Frontend Engineer',
-    org: 'Independent',
+    year: '2026 — present',
+    role: 'Co-creator · Frontend & product',
+    org: 'TripVice',
     kind: 'work' as const,
     detail:
-      'Building product UIs for early-stage teams. React, TypeScript, design-system work.',
+      'Search and results screens, destination discovery pages and the interface for the Vice chat assistant. Now in beta.',
   },
   {
-    year: '2024',
-    role: 'Co-creator · Frontend',
-    org: 'Tripvice.net',
-    kind: 'work' as const,
-    detail:
-      'Co-founded the AI travel planner. Owned the itinerary canvas and the streaming UI.',
-  },
-  {
-    year: '2023 — 2024',
-    role: 'Junior Traffic Engineer',
-    org: 'Municipal Traffic Bureau · Kragujevac',
-    kind: 'work' as const,
-    detail:
-      'Signal timing studies, microsimulation models in Vissim, intersection redesigns.',
-  },
-  {
-    year: '2019 — 2024',
-    role: 'B.Sc. Road & Transport Engineering',
-    org: 'University of Kragujevac',
+    year: '2022 — 2024',
+    role: 'Frontend & Java courses',
+    org: 'IT Academy · Udemy',
     kind: 'edu' as const,
-    detail: 'Thesis: Microsimulation-based optimization of signalized intersections.',
+    detail:
+      'HTML5, CSS3 & JavaScript and Java Development at IT Academy (2022–2023), plus React (incl. Next.js, Redux) and CSS (Flexbox, Grid, Sass) on Udemy (2023–2024).',
+  },
+  {
+    year: '2021 — 2025',
+    role: 'Engineer of Transport',
+    org: 'Academy of Professional Studies · Uroševac–Leposavić',
+    kind: 'edu' as const,
+    detail: 'Road traffic and transport studies.',
+  },
+  {
+    year: '2017 — 2021',
+    role: 'Computer Technician',
+    org: '"Nikola Tesla" Technical High School',
+    kind: 'edu' as const,
+    detail: 'Secondary vocational education in computing.',
   },
 ];
-
-// 12 weeks × 7 days deterministic commit heatmap
-const COMMITS_30D = (() => {
-  let s = 7;
-  const out: number[] = [];
-  for (let i = 0; i < 84; i++) {
-    s = (s * 9301 + 49297) % 233280;
-    const r = s / 233280;
-    out.push(Math.floor(r * r * 5));
-  }
-  return out;
-})();
 
 // ─── Primitives ───────────────────────────────────────────────────
 
@@ -671,18 +659,10 @@ function Sidebar({ active }: { active: string }) {
         <div style={{ fontSize: 10, color: 'rgba(255,255,255,.5)', fontFamily: MONO, letterSpacing: 0.5 }}>
           currently building
         </div>
-        <div style={{ fontSize: 14, color: '#fff', fontWeight: 500, marginTop: 4 }}>Tripvice v2</div>
+        <div style={{ fontSize: 14, color: '#fff', fontWeight: 500, marginTop: 4 }}>TripVice</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
-          <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,.06)', borderRadius: 2, overflow: 'hidden' }}>
-            <div
-              style={{
-                height: '100%', width: '68%',
-                background: `linear-gradient(90deg, ${C}, ${C2})`,
-                boxShadow: `0 0 6px ${C}55`,
-              }}
-            />
-          </div>
-          <span style={{ fontSize: 10, color: C, fontFamily: MONO }}>68%</span>
+          <div style={{ flex: 1, height: 3, background: `linear-gradient(90deg, ${C}, ${C2})`, borderRadius: 2, opacity: 0.6 }} />
+          <span style={{ fontSize: 10, color: C, fontFamily: MONO }}>beta</span>
         </div>
       </div>
 
@@ -836,7 +816,7 @@ function Hero() {
               animation: 'portfolio-pulse 2s ease-in-out infinite',
             }}
           />
-          AVAILABLE · JUN 2026
+          AVAILABLE FOR WORK
         </div>
       </Reveal>
 
@@ -894,7 +874,7 @@ function Hero() {
               I design systems that move — from urban traffic flows to interactive
               frontends. Co-creator of{' '}
               <a
-                href="https://tripvice.net"
+                href="https://tripvice-web.vercel.app"
                 target="_blank"
                 rel="noreferrer"
                 style={{
@@ -902,9 +882,9 @@ function Hero() {
                   borderBottom: `1.5px solid ${C}`, textDecoration: 'none',
                 }}
               >
-                Tripvice.net
+                TripVice
               </a>
-              , an AI travel planner.
+              , a travel planning app now in beta.
             </p>
           </Reveal>
 
@@ -931,10 +911,10 @@ function Hero() {
             marginTop: 44,
           }}
         >
-          <StatCard k="Years building"   v={PROFILE.yearsCoding}     suffix="+" sub="since 2021"          color={C}        />
-          <StatCard k="Projects shipped" v={PROFILE.projectsShipped}            sub="web + traffic"       color={C2}       />
-          <StatCard k="Active users"     v={4200}                               sub="on Tripvice.net"     color="#fff"     format={(n) => (n / 1000).toFixed(1) + 'k'} />
-          <StatCard k="Client rating"    v={49}                                 sub="/ 50 · 23 reviews"   color="#fbbf24"  format={(n) => (n / 10).toFixed(1)} suffix="★" />
+          <StatCard k="Years coding"     v={PROFILE.yearsCoding}     suffix="+" sub="since 2022"          color={C}        />
+          <StatCard k="Projects built"   v={PROFILE.projectsShipped}            sub="web apps & practice" color={C2}       />
+          <StatCard k="Certificates"     v={4}                                  sub="IT Academy · Udemy"  color="#fff"     />
+          <StatCard k="Languages"        v={2}                                  sub="English · Serbian"   color="#fbbf24"  />
         </div>
       </Reveal>
     </section>
@@ -1148,9 +1128,10 @@ function About() {
                 and trying to make a React form not feel like one.
               </p>
               <p style={{ margin: '12px 0 0' }}>
-                Today I split my time between freelance frontend work and side projects.
-                The most consequential of those is <span style={{ color: C, fontWeight: 500 }}>Tripvice.net</span> — an
-                AI travel planner I co-created. I built the frontend, the itinerary canvas, and the streaming response UI.
+                I learned frontend development on my own and through focused courses, then put it to work on
+                real projects. The biggest one is <span style={{ color: C, fontWeight: 500 }}>TripVice</span>, a
+                travel planning app I co-created, now in beta. I worked on the search and results screens, the
+                destination discovery pages and the interface for Vice, its chat assistant.
               </p>
               <p style={{ margin: '12px 0 0' }}>
                 I&apos;m fluent in both vocabularies: signal timing diagrams and React DevTools, microsimulation
@@ -1165,7 +1146,7 @@ function About() {
               }}
             >
               <FactBlock k="Based in" v={PROFILE.location} />
-              <FactBlock k="Languages" v="EN · SR · DE (A2)" />
+              <FactBlock k="Languages" v="EN · SR" />
               <FactBlock k="Workspace" v="Remote · Hybrid" />
             </div>
           </Panel>
@@ -1302,45 +1283,13 @@ function Skills() {
         </Reveal>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'var(--skills2-cols)', gap: 16, marginTop: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16, marginTop: 16 }}>
         <Reveal>
           <Panel label="FRONTEND · DETAIL" code="// stack.json" accent={C}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px 28px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px 28px' }}>
               {SKILLS_FRONTEND.map((s, i) => (
                 <SkillBar key={s.name} s={s} accent={C} accent2={C2} i={i} />
               ))}
-            </div>
-          </Panel>
-        </Reveal>
-
-        <Reveal delay={80}>
-          <Panel
-            label="ACTIVITY"
-            code="// 12 weeks"
-            accent={C}
-            headerRight={
-              <span style={{ fontFamily: MONO, fontSize: 10, color: 'rgba(255,255,255,.55)' }}>
-                <span style={{ color: '#fff' }}>{COMMITS_30D.reduce((a, b) => a + b, 0)}</span> commits
-              </span>
-            }
-          >
-            <Heatmap />
-            <div
-              style={{
-                display: 'flex', justifyContent: 'space-between', marginTop: 10,
-                fontFamily: MONO, fontSize: 9.5, color: 'rgba(255,255,255,.4)',
-                letterSpacing: 0.5,
-              }}
-            >
-              <span>12 weeks ago</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span>less</span>
-                {[0.1, 0.3, 0.55, 0.8, 1].map((o, i) => (
-                  <span key={i} style={{ width: 8, height: 8, borderRadius: 2, background: C, opacity: o }} />
-                ))}
-                <span>more</span>
-              </div>
-              <span>today</span>
             </div>
           </Panel>
         </Reveal>
@@ -1383,32 +1332,6 @@ function SkillBar({
   );
 }
 
-function Heatmap() {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 3 }}>
-      {Array.from({ length: 12 }).map((_, col) => (
-        <div key={col} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {Array.from({ length: 7 }).map((_, row) => {
-            const v = COMMITS_30D[col * 7 + row];
-            const opacity = 0.1 + (v / 5) * 0.85;
-            return (
-              <div
-                key={row}
-                style={{
-                  width: '100%', aspectRatio: '1',
-                  background: v === 0 ? 'rgba(255,255,255,.04)' : C,
-                  opacity: v === 0 ? 1 : opacity,
-                  borderRadius: 2,
-                  boxShadow: v > 3 ? `0 0 5px ${C}` : 'none',
-                }}
-              />
-            );
-          })}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 // ─── Projects ─────────────────────────────────────────────────────
 
@@ -1423,7 +1346,9 @@ function Projects() {
         sub="A flagship and two learning vehicles. Hover to peek; click to expand."
         action={
           <a
-            href="#"
+            href={`${PROFILE.githubUrl}?tab=repositories`}
+            target="_blank"
+            rel="noreferrer"
             style={{
               fontSize: 12, color: 'rgba(255,255,255,.55)', textDecoration: 'none',
               fontFamily: MONO, letterSpacing: 0.5,
@@ -1490,7 +1415,7 @@ function FlagshipCard({ p }: { p: Project }) {
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#4ade80' }}>
           <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 5px #4ade80' }} />
-          LIVE · {p.metrics.users} users
+          IN BETA
         </span>
       </div>
 
@@ -1559,9 +1484,9 @@ function FlagshipCard({ p }: { p: Project }) {
             }}
           >
             <div style={{ display: 'flex', gap: 28 }}>
-              <MiniMetric k="Users"  v="4.2k"  color={C} />
-              <MiniMetric k="Rating" v="4.7★" color="#fbbf24" />
-              <MiniMetric k="Status" v="live"  color="#4ade80" />
+              <MiniMetric k="Role"   v="Frontend" color={C} />
+              <MiniMetric k="Year"   v="2026"     color="#fbbf24" />
+              <MiniMetric k="Status" v="beta"     color="#4ade80" />
             </div>
             <a
               href={`https://${p.url}`}
@@ -1577,7 +1502,7 @@ function FlagshipCard({ p }: { p: Project }) {
               onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
               onMouseLeave={(e) => (e.currentTarget.style.transform = '')}
             >
-              Visit tripvice.net <span>↗</span>
+              Visit TripVice <span>↗</span>
             </a>
           </div>
         </div>
@@ -1656,7 +1581,7 @@ function TripvicePreview() {
           }}
         >
           <span style={{ width: 5, height: 5, borderRadius: '50%', background: C, boxShadow: `0 0 5px ${C}` }} />
-          live preview
+          example · vice
         </div>
 
         <div
@@ -1807,9 +1732,9 @@ function Experience() {
       <SectionHead
         chip="// 05 · TIMELINE"
         code=" :: experience.log"
-        title="From signal timing to streaming UIs"
+        title="From transport engineering to frontend"
         accent={C}
-        sub="Five years across two disciplines. The throughline: making complex systems legible."
+        sub="Education and work across two disciplines. The throughline: making complex systems legible."
       />
 
       <Reveal>
@@ -1951,9 +1876,9 @@ function Contact() {
                   color: 'rgba(255,255,255,.7)', maxWidth: 480, lineHeight: 1.55,
                 }}
               >
-                I take on a handful of freelance projects each quarter — frontend builds,
-                design-system work, or anything sitting at the intersection of UI and
-                physical systems. Pick a channel below.
+                I&apos;m open to freelance frontend work and to a frontend role in a team —
+                landing pages, React and Next.js apps, or turning a Figma design into a
+                working site. Pick a channel below.
               </p>
               <div style={{ display: 'flex', gap: 18, marginTop: 22, fontSize: 12, color: 'rgba(255,255,255,.55)', flexWrap: 'wrap' }}>
                 <span><span style={{ color: '#4ade80' }}>●</span> Response within 24h</span>
@@ -1965,7 +1890,7 @@ function Contact() {
               <ContactLink k="Email" v={PROFILE.email} href={`mailto:${PROFILE.email}`} primary />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <ContactLink k="GitHub"   v={`@${PROFILE.github}`} href={PROFILE.githubUrl} />
-                <ContactLink k="LinkedIn" v="in/bogdan-o"          href={PROFILE.linkedinUrl} />
+                <ContactLink k="LinkedIn" v="in/bogdan-obradovic"   href={PROFILE.linkedinUrl} />
               </div>
               <ContactLink k="Location" v={`${PROFILE.location} · CET`} isStatic />
             </div>
@@ -2447,14 +2372,14 @@ function MobHero() {
         I design systems that move — from urban traffic flows to interactive frontends.
         Co-creator of{' '}
         <a
-          href="https://tripvice.net"
+          href="https://tripvice-web.vercel.app"
           target="_blank"
           rel="noreferrer"
           style={{ color: '#fff', fontWeight: 500, borderBottom: `1.5px solid ${C}`, textDecoration: 'none' }}
         >
-          Tripvice.net
+          TripVice
         </a>
-        , an AI travel planner.
+        , a travel planning app now in beta.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 22 }}>
@@ -2505,10 +2430,10 @@ function MobHero() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 22 }}>
-        <MobStatCard k="Years building"   v={PROFILE.yearsCoding}     suffix="+" sub="since 2021"      color={C} />
-        <MobStatCard k="Projects shipped" v={PROFILE.projectsShipped}            sub="web + traffic"   color={C2} />
-        <MobStatCard k="Active users"     v={4200}                               sub="on Tripvice"     color="#fff"    format={(n) => (n / 1000).toFixed(1) + 'k'} />
-        <MobStatCard k="Client rating"    v={49}                                 sub="/ 50 · 23 revs"  color="#fbbf24" format={(n) => (n / 10).toFixed(1)} suffix="★" />
+        <MobStatCard k="Years coding"     v={PROFILE.yearsCoding}     suffix="+" sub="since 2022"      color={C} />
+        <MobStatCard k="Projects built"   v={PROFILE.projectsShipped}            sub="web & practice"  color={C2} />
+        <MobStatCard k="Certificates"     v={4}                                  sub="IT Academy · Udemy" color="#fff" />
+        <MobStatCard k="Languages"        v={2}                                  sub="EN · SR"         color="#fbbf24" />
       </div>
     </section>
   );
@@ -2575,9 +2500,9 @@ function MobAbout() {
               and trying to make a React form not feel like one.
             </p>
             <p style={{ margin: '10px 0 0' }}>
-              Today I split my time between freelance frontend work and side projects — most consequential being{' '}
-              <span style={{ color: C, fontWeight: 500 }}>Tripvice.net</span>. I&apos;m fluent in both vocabularies:
-              signal timing diagrams and React DevTools.
+              I learned frontend on my own and through focused courses. My biggest project is{' '}
+              <span style={{ color: C, fontWeight: 500 }}>TripVice</span>, a travel planning app I co-created, now in
+              beta. I speak both vocabularies: signal timing diagrams and React DevTools.
             </p>
           </div>
           <div
@@ -2588,7 +2513,7 @@ function MobAbout() {
             }}
           >
             <MobFact k="Based in" v={PROFILE.location} />
-            <MobFact k="Languages" v="EN · SR · DE" />
+            <MobFact k="Languages" v="EN · SR" />
             <MobFact k="Workspace" v="Remote / Hybrid" />
             <MobFact k="Response" v="< 24h" />
           </div>
@@ -2734,55 +2659,6 @@ function MobSkills() {
           </div>
         </MobPanel>
 
-        <MobPanel
-          label="ACTIVITY"
-          code="// 12 weeks"
-          accent={C}
-          headerRight={
-            <span style={{ fontFamily: MONO, fontSize: 9, color: 'rgba(255,255,255,.55)' }}>
-              <span style={{ color: '#fff' }}>{COMMITS_30D.reduce((a, b) => a + b, 0)}</span> commits
-            </span>
-          }
-        >
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 3 }}>
-            {Array.from({ length: 12 }).map((_, col) => (
-              <div key={col} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {Array.from({ length: 7 }).map((_, row) => {
-                  const v = COMMITS_30D[col * 7 + row];
-                  const opacity = 0.1 + (v / 5) * 0.85;
-                  return (
-                    <div
-                      key={row}
-                      style={{
-                        width: '100%', aspectRatio: '1',
-                        background: v === 0 ? 'rgba(255,255,255,.04)' : C,
-                        opacity: v === 0 ? 1 : opacity,
-                        borderRadius: 1.5,
-                        boxShadow: v > 3 ? `0 0 4px ${C}` : 'none',
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-          <div
-            style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10,
-              fontFamily: MONO, fontSize: 9, color: 'rgba(255,255,255,.4)',
-            }}
-          >
-            <span>12w ago</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <span>less</span>
-              {[0.12, 0.35, 0.6, 0.85, 1].map((o, i) => (
-                <span key={i} style={{ width: 7, height: 7, borderRadius: 2, background: C, opacity: o }} />
-              ))}
-              <span>more</span>
-            </div>
-            <span>today</span>
-          </div>
-        </MobPanel>
       </div>
     </section>
   );
@@ -2847,7 +2723,7 @@ function MobFlagship({ p }: { p: Project }) {
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#4ade80' }}>
           <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 5px #4ade80' }} />
-          LIVE
+          BETA
         </span>
       </div>
 
@@ -2905,8 +2781,8 @@ function MobFlagship({ p }: { p: Project }) {
           }}
         >
           <div style={{ display: 'flex', gap: 16 }}>
-            <MobMini k="Users"  v="4.2k"  color={C} />
-            <MobMini k="Rating" v="4.7★" color="#fbbf24" />
+            <MobMini k="Year"   v="2026" color={C} />
+            <MobMini k="Status" v="beta" color="#4ade80" />
           </div>
           <a
             href={`https://${p.url}`}
@@ -3091,8 +2967,8 @@ function MobExperience() {
     <section id="m-experience" style={{ scrollMarginTop: 60 }}>
       <MobSectionHead
         chip="// 05 · TIMELINE"
-        title="From signal timing to streaming UIs"
-        sub="Five years across two disciplines."
+        title="From transport engineering to frontend"
+        sub="Education and work across two disciplines."
       />
 
       <div style={{ marginTop: 16 }}>
@@ -3201,7 +3077,7 @@ function MobContact() {
           Got a flow that needs untangling?
         </h3>
         <p style={{ margin: '10px 0 16px', fontSize: 13, color: 'rgba(255,255,255,.7)', lineHeight: 1.5 }}>
-          I take a handful of freelance projects each quarter. Drop a line and tell me what&apos;s up.
+          I&apos;m open to freelance frontend work and to a frontend role in a team. Drop a line and tell me what&apos;s up.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -3230,7 +3106,7 @@ function MobContact() {
             </a>
             <a href={PROFILE.linkedinUrl} target="_blank" rel="noreferrer" style={mobContactSubStyle()}>
               <span style={mobContactSubLabelStyle}>LINKEDIN</span>
-              <span style={mobContactSubValStyle}>in/bogdan-o ↗</span>
+              <span style={mobContactSubValStyle}>in/bogdan-obradovic ↗</span>
             </a>
           </div>
         </div>
